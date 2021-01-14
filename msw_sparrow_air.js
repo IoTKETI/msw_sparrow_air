@@ -52,9 +52,9 @@ catch (e) {
         name: 'lib_sparrow_air',
         target: 'armv6',
         description: "[name] [portnum] [baudrate]",
-        scripts: './lib_sparrow_air /dev/ttyUSB4 115200',
+        scripts: './lib_sparrow_air /dev/ttyUSB3 115200',
         data: ['AIR'],
-        control: ['Control_AIR']
+        control: ['Control_AIR', 'Req_AIR']
     };
     config.lib.push(add_lib);
 }
@@ -124,7 +124,7 @@ function runLib(obj_lib) {
         run_lib.on('exit', function(code) {
             console.log('exit: ' + code);
             
-            setTimeout(runLib, 3000, obj_lib);
+            // setTimeout(runLib, 3000, obj_lib);
         });
 
         run_lib.on('error', function(code) {
@@ -205,6 +205,12 @@ function msw_mqtt_connect(broker_ip, port) {
     }
 }
 
+function req_status() {
+    console.log('send req');
+    msw_mqtt_client.publish('/MUV/data/' + config.lib[0].name + '/' + config.lib[0].control[1], "1");
+    setTimeout(req_status, 1000);
+}
+
 function on_receive_from_muv(topic, str_message) {
     console.log('[' + topic + '] ' + str_message);
 
@@ -225,6 +231,7 @@ function on_process_fc_data(topic, str_message) {
 }
 
 setTimeout(init, 1000);
+req_status();
 
 // 유저 디파인 미션 소프트웨어 기능
 ///////////////////////////////////////////////////////////////////////////////
@@ -242,7 +249,9 @@ function parseDataMission(topic, str_message) {
         var topic_arr = topic.split('/');
         var data_topic = '/Mobius/' + config.gcs + '/Mission_Data/' + config.drone + '/' + config.name + '/' + topic_arr[topic_arr.length-1];
         msw_mqtt_client.publish(data_topic + '/' + my_sortie_name, str_message);
-//         msw_mqtt_client.publish(data_topic, str_message);
+        var _topic = '/MUV/control/' + config.lib[0].name + '/' + config.lib[0].control[0];
+        var req = '1';
+        msw_mqtt_client.publish(_topic, str_message);
     }
     catch (e) {
         console.log('[parseDataMission] data format of lib is not json');
