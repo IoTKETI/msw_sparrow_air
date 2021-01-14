@@ -231,7 +231,7 @@ function on_process_fc_data(topic, str_message) {
 }
 
 setTimeout(init, 1000);
-req_status();
+// req_status();
 
 // 유저 디파인 미션 소프트웨어 기능
 ///////////////////////////////////////////////////////////////////////////////
