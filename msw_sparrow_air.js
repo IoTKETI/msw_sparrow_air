@@ -206,7 +206,7 @@ function msw_mqtt_connect(broker_ip, port) {
 }
 
 function req_status() {
-    console.log('/MUV/data/' + config.lib[0].name + '/' + config.lib[0].control[1]);
+    console.log('/MUV/control/' + config.lib[0].name + '/' + config.lib[0].control[1]);
     msw_mqtt_client.publish('/MUV/data/' + config.lib[0].name + '/' + config.lib[0].control[1], "1");
     setTimeout(req_status, 1000);
 }
